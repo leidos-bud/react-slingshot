@@ -1,0 +1,51 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: 
+          name: "npm install"
+          command: npm i
+      - save_cache:
+          key: "npm-packages"
+          paths:
+            - /src/node_modules
+      - run: 
+          name: "npm lint"
+          command: npm run lint
+  test:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: "npm-packages"
+      - run: 
+          name: "npm test"
+          command: npm run test
+  analyze:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: "npm-packages"
+      - run: 
+          name: "npm audit"
+          command: npm audit
+
+workflows:
+  # Name the workflow "welcome"
+  welcome:
+    # Run the welcome/run job in its own container
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - analyze:
+          requires:
+            - test
