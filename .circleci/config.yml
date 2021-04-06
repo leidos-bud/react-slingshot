@@ -39,7 +39,7 @@ jobs:
 
 workflows:
   # Name the workflow "welcome"
-  welcome:
+  createpipeline:
     # Run the welcome/run job in its own container
     jobs:
       - build
